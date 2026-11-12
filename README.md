@@ -2,6 +2,7 @@
 
 [Смотреть галерею](https://yungspiderq.github.io/motion-archive/)
 
+- Tokyo Manaka feat. Kasane Teto — «Brain Rot»
 - Midix — «105 проблем»
 - auratoshi — «dn(m)c»
 - Kroi — «SPIN»
