@@ -151,20 +151,47 @@
       x.beginPath();
       x.arc(sx, sy, 150, 0, 6.283);
       x.stroke();
-      // foliage mass at the left
+      // foliage: one cohesive canopy silhouette, then leaf texture inside it
       const r = L.R(3410);
-      x.save();
-      x.globalCompositeOperation = "multiply";
-      for (let i = 0; i < 46; i++) {
-        const bx = W * (0.02 + r() * 0.36);
-        const by = H * (0.02 + r() * 0.42);
-        const rr = 60 + r() * 120;
-        x.globalAlpha = 0.22 + r() * 0.3;
-        x.fillStyle = "rgba(46,54,40,1)";
-        x.beginPath();
-        x.ellipse(bx, by, rr, rr * 0.78, r() * 3, 0, 6.283);
-        x.fill();
+      const cx0 = W * 0.2,
+        cy0 = H * 0.23;
+      const canopy = L.make(W, H);
+      const c2 = canopy.getContext("2d");
+      c2.fillStyle = "rgba(40,46,34,1)";
+      for (let i = 0; i < 26; i++) {
+        const a = r() * 6.283;
+        const rad = Math.sqrt(r());
+        const bx = cx0 + Math.cos(a) * rad * W * 0.16;
+        const by = cy0 + Math.sin(a) * rad * H * 0.2;
+        const rr = 70 + r() * 90;
+        c2.beginPath();
+        c2.ellipse(bx, by, rr, rr * 0.8, a, 0, 6.283);
+        c2.fill();
       }
+      // leaf texture, clipped to the canopy
+      c2.globalCompositeOperation = "source-atop";
+      for (let i = 0; i < 240; i++) {
+        const a = r() * 6.283;
+        const rad = Math.sqrt(r());
+        const bx = cx0 + Math.cos(a) * rad * W * 0.19;
+        const by = cy0 + Math.sin(a) * rad * H * 0.235;
+        const rr = 12 + r() * 26;
+        c2.globalAlpha = 0.1 + r() * 0.22;
+        c2.fillStyle = r() > 0.55 ? "rgba(24,30,22,1)" : "rgba(96,102,70,1)";
+        c2.beginPath();
+        c2.ellipse(bx, by, rr, rr * 0.55, a, 0, 6.283);
+        c2.fill();
+      }
+      // sunlight grazing the right-hand edge of the canopy
+      c2.globalAlpha = 1;
+      const rim = c2.createLinearGradient(cx0 + W * 0.02, cy0 - H * 0.16, cx0 + W * 0.2, cy0 + H * 0.1);
+      rim.addColorStop(0, "rgba(214,204,146,0)");
+      rim.addColorStop(1, "rgba(214,204,146,0.5)");
+      c2.fillStyle = rim;
+      c2.fillRect(0, 0, W, H);
+      x.save();
+      x.globalAlpha = 0.94;
+      x.drawImage(canopy, 0, 0);
       x.restore();
       // trunk
       ink(x, [[W * 0.2, H * 0.48], [W * 0.205, H * 0.62], [W * 0.19, H * 0.8]], 26, 3411, 0.8);
