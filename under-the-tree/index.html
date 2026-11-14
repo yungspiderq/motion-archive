@@ -1295,7 +1295,11 @@
       const treePhrase = line.toLowerCase().lastIndexOf(' under ');
       const split = i <= 2 && boundary ? boundary.index + 1 : i === 14 || i === 40 ? comma + 1 : treePhrase;
       if (split <= 0 || split >= line.length - 1) return [{t, end, text: line}];
-      return pair.map(([start, stop], j) => ({t: start, end: stop, text: j ? line.slice(split).trim() : line.slice(0, split).trim()}));
+      return pair.map((cueIndex, part) => {
+        const [start, stop] = lyricTiming[cueIndex];
+        const text = part === 0 ? line.slice(0, split) : line.slice(split);
+        return {t: start, end: stop, text: text.trim()};
+      });
     });
   }
 
